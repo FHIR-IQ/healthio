@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FHIR IQ Badge | HIMSS 2026",
+  title: "FHIR IQ | HIMSS 2026",
   description:
-    "Test your FHIR interoperability knowledge and earn a shareable badge at HIMSS 2026. From the Out of the FHIR podcast & FHIR IQ Playbook.",
+    "Test your FHIR knowledge with the IQ Challenge and design the future of health IT with the HTI-6 Builder. From the Out of the FHIR podcast & FHIR IQ Playbook.",
   keywords: [
     "FHIR",
     "HIMSS 2026",
@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     "HL7",
     "badge",
     "quiz",
+    "HTI-6",
+    "ONC",
+    "ASTP",
+    "health IT regulation",
   ],
   openGraph: {
     title: "FHIR IQ Badge | HIMSS 2026",
