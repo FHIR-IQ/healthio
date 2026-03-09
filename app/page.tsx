@@ -4,8 +4,9 @@ import { useState } from "react";
 import FireIcon from "@/components/FireIcon";
 import QuizEngine from "@/components/QuizEngine";
 import HTI6Builder from "@/components/HTI6Builder";
+import HealthAgentBuilder from "@/components/HealthAgentBuilder";
 
-type AppState = "hub" | "quiz-landing" | "quiz" | "hti6-landing" | "hti6";
+type AppState = "hub" | "quiz-landing" | "quiz" | "hti6-landing" | "hti6" | "agent-landing" | "agent";
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>("hub");
@@ -23,6 +24,13 @@ export default function Home() {
     if (nameInput.trim()) {
       setPlayerName(nameInput.trim());
       setAppState("hti6");
+    }
+  };
+
+  const handleStartAgent = () => {
+    if (nameInput.trim()) {
+      setPlayerName(nameInput.trim());
+      setAppState("agent");
     }
   };
 
@@ -70,6 +78,27 @@ export default function Home() {
           </p>
         </div>
         <HTI6Builder playerName={playerName} onBack={handleRestart} />
+      </main>
+    );
+  }
+
+  // Agent Builder mode
+  if (appState === "agent") {
+    return (
+      <main className="min-h-screen py-8">
+        <div className="text-center mb-8 px-4">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-lg">🤖</span>
+            <span className="text-sm font-bold tracking-wider text-fhir-purple uppercase">
+              Healthcare Agent Builder
+            </span>
+            <span className="text-lg">🤖</span>
+          </div>
+          <p className="text-white/40 text-sm">
+            Designing as <span className="text-white/70 font-semibold">{playerName}</span>
+          </p>
+        </div>
+        <HealthAgentBuilder playerName={playerName} onBack={handleRestart} />
       </main>
     );
   }
@@ -234,6 +263,84 @@ export default function Home() {
     );
   }
 
+  // Agent landing (name entry)
+  if (appState === "agent-landing") {
+    return (
+      <main className="min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+          <div className="animate-float mb-8">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 p-[2px]">
+              <div className="w-full h-full rounded-full bg-fhir-deeper flex items-center justify-center">
+                <span className="text-5xl">🤖</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mb-8 animate-fade-in">
+            <h1 className="text-4xl md:text-5xl font-black mb-3">
+              <span className="agent-gradient-text">Agent Builder</span>
+            </h1>
+            <p className="text-lg text-white/80 font-light mb-2">
+              Design your AI healthcare concierge
+            </p>
+            <p className="text-white/40 max-w-md mx-auto text-sm">
+              Build a personalized AI agent powered by FHIR + Claude that manages
+              your health, navigates the system, and fights for your care.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10 animate-slide-up">
+            {[
+              { emoji: "🧭", label: "Navigate" },
+              { emoji: "🛡️", label: "Advocate" },
+              { emoji: "💪", label: "Coach" },
+              { emoji: "🔬", label: "Analyze" },
+            ].map((item) => (
+              <div key={item.label} className="text-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-violet-600/20 border border-purple-500/20 flex items-center justify-center text-lg mx-auto mb-1">
+                  {item.emoji}
+                </div>
+                <span className="text-[10px] text-white/40">{item.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="w-full max-w-sm animate-slide-up">
+            <div className="glass-strong rounded-2xl p-6">
+              <label className="block text-sm text-white/50 mb-2 font-medium">
+                Your Name
+              </label>
+              <input
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleStartAgent()}
+                placeholder="Enter your name"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-fhir-purple transition-colors mb-4 text-lg"
+                maxLength={30}
+                autoFocus
+              />
+              <button
+                onClick={handleStartAgent}
+                disabled={!nameInput.trim()}
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-fhir-purple to-violet-600 text-white font-bold text-lg hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Start Building 🤖
+              </button>
+            </div>
+          </div>
+
+          <button
+            onClick={() => { setAppState("hub"); setNameInput(""); }}
+            className="mt-6 text-sm text-white/30 hover:text-white/60 transition-colors"
+          >
+            ← Back to Games
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   // Hub - game selection
   return (
     <main className="min-h-screen flex flex-col">
@@ -334,9 +441,44 @@ export default function Home() {
               </svg>
             </div>
           </button>
+          {/* Healthcare Agent Builder Card */}
+          <button
+            onClick={() => setAppState("agent-landing")}
+            className="w-full text-left glass-strong rounded-2xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all group relative overflow-hidden"
+          >
+            <div className="absolute top-3 right-3">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold uppercase border border-green-500/30">
+                New
+              </span>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center flex-shrink-0">
+                <span className="text-3xl">🤖</span>
+              </div>
+              <div className="flex-1 pr-8">
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="text-xl font-black text-white group-hover:text-fhir-purple transition-colors">
+                    Agent Builder
+                  </h2>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-fhir-purple font-bold uppercase">
+                    Design
+                  </span>
+                </div>
+                <p className="text-white/50 text-sm mb-3">
+                  Build your ideal AI healthcare concierge. Choose a persona, connect FHIR data sources, and select capabilities — from claim denial fighting to predictive health alerts.
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-white/30 flex items-center gap-1">🧠 Claude + FHIR</span>
+                  <span className="text-white/10">|</span>
+                  <span className="text-xs text-white/30 flex items-center gap-1">📊 Community Builds</span>
+                </div>
+              </div>
+              <svg className="w-5 h-5 text-white/20 group-hover:text-white/50 transition-colors mt-1 flex-shrink-0 absolute right-6 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
         </div>
-
-        {/* Quick name entry for HTI-6 (inline) */}
 
         {/* Features */}
         <div className="grid grid-cols-3 gap-4 mt-10 max-w-lg animate-fade-in">

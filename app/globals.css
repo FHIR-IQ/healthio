@@ -111,6 +111,14 @@ body {
   }
 }
 
+/* Agent builder gradient text */
+.agent-gradient-text {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7, #d946ef);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* HTI-6 gradient text */
 .hti6-gradient-text {
   background: linear-gradient(135deg, #00d4ff, #3b82f6, #8b5cf6);
