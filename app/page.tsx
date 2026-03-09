@@ -1,83 +1,181 @@
-import Link from 'next/link';
-import ArchitectureDiagram from '@/components/ArchitectureDiagram';
-import NavBar from '@/components/NavBar';
+"use client";
+
+import { useState } from "react";
+import FireIcon from "@/components/FireIcon";
+import QuizEngine from "@/components/QuizEngine";
+
+type AppState = "landing" | "quiz";
 
 export default function Home() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-slate-100 dark:from-slate-950 dark:to-slate-900">
-      <NavBar />
-      {/* Hero Section */}
-      <main className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-            From Plumbing to Possibility
-          </h1>
-          <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
-            FHIR as the Platform
-          </p>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-            If you can prompt an LLM, you can build a health app —<br />
-            <span className="font-semibold text-slate-700 dark:text-slate-300">because the platform does the FHIR.</span>
-          </p>
+  const [appState, setAppState] = useState<AppState>("landing");
+  const [playerName, setPlayerName] = useState("");
+  const [nameInput, setNameInput] = useState("");
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16 animate-slide-up">
-            <Link
-              href="/builder-sandbox"
-              className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
-            >
-              <span className="relative z-10">I&apos;m a Builder</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-            <Link
-              href="/catalog"
-              className="group relative px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[200px]"
-            >
-              <span className="relative z-10">I&apos;m a Data Holder</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-teal-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
+  const handleStart = () => {
+    if (nameInput.trim()) {
+      setPlayerName(nameInput.trim());
+      setAppState("quiz");
+    }
+  };
+
+  const handleRestart = () => {
+    setAppState("landing");
+    setPlayerName("");
+    setNameInput("");
+  };
+
+  if (appState === "quiz") {
+    return (
+      <main className="min-h-screen py-8">
+        {/* Header */}
+        <div className="text-center mb-8 px-4">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <FireIcon className="w-6 h-6" />
+            <span className="text-sm font-bold tracking-wider text-fhir-flame uppercase">
+              FHIR IQ Challenge
+            </span>
+            <FireIcon className="w-6 h-6" />
           </div>
+          <p className="text-white/40 text-sm">
+            Playing as <span className="text-white/70 font-semibold">{playerName}</span>
+          </p>
         </div>
 
-        {/* Architecture Diagram */}
-        <div className="mb-16 animate-slide-up">
-          <ArchitectureDiagram />
-        </div>
-
-        {/* Value Propositions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">🚀</div>
-            <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">For Builders</h3>
-            <p className="text-slate-600 dark:text-slate-400">
-              Focus on UX, not FHIR specs. The SDK handles data mapping, context, and events automatically.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">🔌</div>
-            <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">For Data Holders</h3>
-            <p className="text-slate-600 dark:text-slate-400">
-              Join the catalog once. Instantly available to all apps. No custom integrations needed.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">🌐</div>
-            <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Network Effect</h3>
-            <p className="text-slate-600 dark:text-slate-400">
-              More apps = more value for patients. More data holders = more reach for builders.
-            </p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <footer className="text-center text-slate-500 dark:text-slate-500 border-t border-slate-200 dark:border-slate-800 pt-8">
-          <p className="text-sm">
-            FHIR IQ Sandbox Demo © 2025
-          </p>
-        </footer>
+        <QuizEngine playerName={playerName} onRestart={handleRestart} />
       </main>
-    </div>
+    );
+  }
+
+  return (
+    <main className="min-h-screen flex flex-col">
+      {/* Hero Section */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        {/* Floating badge preview */}
+        <div className="animate-float mb-8">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-fhir-flame to-fhir-ember p-[2px]">
+            <div className="w-full h-full rounded-full bg-fhir-deeper flex items-center justify-center">
+              <FireIcon className="w-12 h-12" />
+            </div>
+          </div>
+        </div>
+
+        {/* Title */}
+        <div className="text-center mb-8 animate-fade-in">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="text-xs font-bold tracking-[0.3em] text-fhir-accent uppercase">
+              HIMSS 2026
+            </span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black mb-4">
+            <span className="gradient-text">FHIR IQ</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-white/80 font-light mb-2">
+            How well do you know FHIR?
+          </p>
+          <p className="text-white/40 max-w-md mx-auto">
+            Take the 10-question challenge, earn your badge, and share it with
+            the world. Bronze, Silver, or Gold — where do you rank?
+          </p>
+        </div>
+
+        {/* Badge tiers preview */}
+        <div className="flex items-center gap-6 mb-10 animate-slide-up">
+          <div className="text-center">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 via-amber-600 to-orange-700 p-[2px] mx-auto mb-2">
+              <div className="w-full h-full rounded-full bg-fhir-deeper flex items-center justify-center text-lg">
+                🥉
+              </div>
+            </div>
+            <span className="text-xs text-white/40">50%+</span>
+          </div>
+          <div className="text-center">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-300 via-slate-300 to-gray-400 p-[2px] mx-auto mb-2">
+              <div className="w-full h-full rounded-full bg-fhir-deeper flex items-center justify-center text-lg">
+                🥈
+              </div>
+            </div>
+            <span className="text-xs text-white/40">70%+</span>
+          </div>
+          <div className="text-center">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 via-amber-400 to-yellow-600 p-[2px] mx-auto mb-2 badge-glow-gold">
+              <div className="w-full h-full rounded-full bg-fhir-deeper flex items-center justify-center text-lg">
+                🏆
+              </div>
+            </div>
+            <span className="text-xs text-white/40">90%+</span>
+          </div>
+        </div>
+
+        {/* Name input & start */}
+        <div className="w-full max-w-sm animate-slide-up">
+          <div className="glass-strong rounded-2xl p-6">
+            <label className="block text-sm text-white/50 mb-2 font-medium">
+              Your Name (for the badge)
+            </label>
+            <input
+              type="text"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleStart()}
+              placeholder="Enter your name"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-fhir-flame transition-colors mb-4 text-lg"
+              maxLength={30}
+              autoFocus
+            />
+            <button
+              onClick={handleStart}
+              disabled={!nameInput.trim()}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-fhir-flame to-fhir-ember text-white font-bold text-lg hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Start Challenge 🔥
+            </button>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="grid grid-cols-3 gap-4 mt-10 max-w-lg animate-fade-in">
+          <div className="text-center">
+            <div className="text-2xl mb-1">📱</div>
+            <p className="text-xs text-white/40">Share via Text</p>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl mb-1">💼</div>
+            <p className="text-xs text-white/40">Post to LinkedIn</p>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl mb-1">🤖</div>
+            <p className="text-xs text-white/40">AI-Powered</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="text-center py-8 px-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex items-center gap-4">
+            <a
+              href="https://outofthefhir.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-white/40 hover:text-fhir-flame transition-colors"
+            >
+              Out of the FHIR Podcast
+            </a>
+            <span className="text-white/20">•</span>
+            <a
+              href="https://fhiriq.substack.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-white/40 hover:text-fhir-accent transition-colors"
+            >
+              FHIR IQ Playbook
+            </a>
+          </div>
+          <p className="text-xs text-white/20">
+            Built for HIMSS 2026 — Las Vegas, NV
+          </p>
+        </div>
+      </footer>
+    </main>
   );
 }

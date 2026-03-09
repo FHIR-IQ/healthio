@@ -3,25 +3,115 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --fhir-dark: #0a0e27;
+  --fhir-deeper: #060918;
+  --fhir-flame: #ff6b35;
+  --fhir-accent: #00d4ff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fhir-deeper);
+  color: white;
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--fhir-deeper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 53, 0.5);
+}
+
+/* Glass morphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Badge glow effects */
+.badge-glow-gold {
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.3), 0 0 80px rgba(255, 215, 0, 0.15),
+    inset 0 0 30px rgba(255, 215, 0, 0.05);
+}
+
+.badge-glow-silver {
+  box-shadow: 0 0 40px rgba(192, 192, 192, 0.3),
+    0 0 80px rgba(192, 192, 192, 0.15),
+    inset 0 0 30px rgba(192, 192, 192, 0.05);
+}
+
+.badge-glow-bronze {
+  box-shadow: 0 0 40px rgba(205, 127, 50, 0.3),
+    0 0 80px rgba(205, 127, 50, 0.15),
+    inset 0 0 30px rgba(205, 127, 50, 0.05);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #ff6b35, #ff8c42, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Particle background */
+.bg-grid {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 0
+  );
+  background-size: 40px 40px;
+}
+
+/* Shimmer effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
   }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Progress bar animation */
+.progress-fill {
+  transition: width 1s ease-out;
 }
