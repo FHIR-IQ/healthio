@@ -10,6 +10,7 @@ import {
   saveBlueprint,
   getLeaderboardData,
   getShareTextForBlueprint,
+  getShareableHTI6Url,
   getLinkedInShareUrlForBlueprint,
 } from "@/lib/hti6-data";
 
@@ -18,10 +19,11 @@ type GamePhase = "intro" | "allocate" | "policies" | "result" | "leaderboard";
 interface HTI6BuilderProps {
   playerName: string;
   onBack: () => void;
+  sharedBlueprint?: HTI6Blueprint | null;
 }
 
-export default function HTI6Builder({ playerName, onBack }: HTI6BuilderProps) {
-  const [phase, setPhase] = useState<GamePhase>("intro");
+export default function HTI6Builder({ playerName, onBack, sharedBlueprint }: HTI6BuilderProps) {
+  const [phase, setPhase] = useState<GamePhase>(sharedBlueprint ? "result" : "intro");
   const [allocations, setAllocations] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     HTI6_PILLARS.forEach((p) => (initial[p.id] = 20)); // even split
@@ -30,7 +32,7 @@ export default function HTI6Builder({ playerName, onBack }: HTI6BuilderProps) {
   const [selectedPolicies, setSelectedPolicies] = useState<Set<string>>(
     new Set()
   );
-  const [blueprint, setBlueprint] = useState<HTI6Blueprint | null>(null);
+  const [blueprint, setBlueprint] = useState<HTI6Blueprint | null>(sharedBlueprint || null);
   const [copied, setCopied] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
@@ -409,8 +411,9 @@ export default function HTI6Builder({ playerName, onBack }: HTI6BuilderProps) {
 
     const baseUrl =
       typeof window !== "undefined" ? window.location.origin : "";
+    const shareableUrl = getShareableHTI6Url(blueprint, baseUrl);
     const shareText = getShareTextForBlueprint(blueprint);
-    const fullShareText = `${shareText} ${baseUrl}/hti6-builder`;
+    const fullShareText = `${shareText} ${shareableUrl}`;
 
     const handleLinkedIn = () => {
       const url = getLinkedInShareUrlForBlueprint(blueprint, baseUrl);
@@ -427,7 +430,7 @@ export default function HTI6Builder({ playerName, onBack }: HTI6BuilderProps) {
     const handleCopyLink = async () => {
       try {
         await navigator.clipboard.writeText(
-          `${shareText}\n\n${baseUrl}/hti6-builder`
+          `${shareText}\n\n${shareableUrl}`
         );
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);

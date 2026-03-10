@@ -389,6 +389,47 @@ export function getLeaderboardData(): {
   return { totalSubmissions: data.totalSubmissions, pillarAverages, topPolicies };
 }
 
+export function getShareableHTI6Url(blueprint: HTI6Blueprint, baseUrl: string): string {
+  // Encode allocations as ordered comma-separated values (pillar order matches HTI6_PILLARS)
+  const allocationValues = HTI6_PILLARS.map((p) => blueprint.allocations[p.id] || 0).join(",");
+  const params = new URLSearchParams({
+    id: blueprint.id,
+    n: blueprint.name,
+    a: allocationValues,
+    p: blueprint.selectedPolicies.join(","),
+  });
+  return `${baseUrl}/hti6-builder?${params.toString()}`;
+}
+
+export function parseSharedBlueprint(searchParams: URLSearchParams): HTI6Blueprint | null {
+  const id = searchParams.get("id");
+  const name = searchParams.get("n");
+  const allocationsStr = searchParams.get("a");
+  const policiesStr = searchParams.get("p");
+
+  if (!id || !name || !allocationsStr || !policiesStr) return null;
+
+  const allocationValues = allocationsStr.split(",").map(Number);
+  if (allocationValues.length !== HTI6_PILLARS.length || allocationValues.some(isNaN)) return null;
+
+  const allocations: Record<string, number> = {};
+  HTI6_PILLARS.forEach((p, i) => {
+    allocations[p.id] = allocationValues[i];
+  });
+
+  const selectedPolicies = policiesStr.split(",").filter(Boolean);
+  const topPillar = Object.entries(allocations).sort((a, b) => b[1] - a[1])[0][0];
+
+  return {
+    id,
+    name: decodeURIComponent(name),
+    date: new Date().toISOString(),
+    allocations,
+    selectedPolicies,
+    topPillar,
+  };
+}
+
 export function getShareTextForBlueprint(blueprint: HTI6Blueprint): string {
   const topPillar = HTI6_PILLARS.find((p) => p.id === blueprint.topPillar);
   const policyCount = blueprint.selectedPolicies.length;
@@ -402,7 +443,7 @@ export function getLinkedInShareUrlForBlueprint(
   baseUrl: string
 ): string {
   const topPillar = HTI6_PILLARS.find((p) => p.id === blueprint.topPillar);
-  const url = `${baseUrl}/hti6-builder`;
+  const url = getShareableHTI6Url(blueprint, baseUrl);
   const title = `My HTI-6 Blueprint: ${topPillar?.emoji} ${topPillar?.title} is #1`;
   const summary = getShareTextForBlueprint(blueprint);
 

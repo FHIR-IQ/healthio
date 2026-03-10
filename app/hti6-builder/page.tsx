@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HTI6Builder from "@/components/HTI6Builder";
 import FireIcon from "@/components/FireIcon";
+import { HTI6Blueprint, parseSharedBlueprint } from "@/lib/hti6-data";
 
 export default function HTI6BuilderPage() {
   const [started, setStarted] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [nameInput, setNameInput] = useState("");
+  const [sharedBlueprint, setSharedBlueprint] = useState<HTI6Blueprint | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const bp = parseSharedBlueprint(params);
+    if (bp) {
+      setSharedBlueprint(bp);
+      setPlayerName(bp.name);
+      setStarted(true);
+    }
+  }, []);
 
   const handleStart = () => {
     if (nameInput.trim()) {
@@ -39,7 +51,7 @@ export default function HTI6BuilderPage() {
             <span className="text-white/70 font-semibold">{playerName}</span>
           </p>
         </div>
-        <HTI6Builder playerName={playerName} onBack={handleBack} />
+        <HTI6Builder playerName={playerName} onBack={handleBack} sharedBlueprint={sharedBlueprint} />
       </main>
     );
   }
