@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { BadgeResult, badgeConfig } from "@/lib/badge";
+import { BadgeResult, badgeConfig, getBadgeUrl } from "@/lib/badge";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const config = badgeConfig[tier];
-    const badgeUrl = `${request.nextUrl.origin}/badge/${badgeId}`;
+    const badgeUrl = getBadgeUrl(body, request.nextUrl.origin);
 
     // Generate share URLs
     const shareData = {

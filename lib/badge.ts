@@ -72,13 +72,23 @@ export const badgeConfig = {
   },
 };
 
+export function getBadgeUrl(result: BadgeResult, baseUrl: string): string {
+  const params = new URLSearchParams({
+    t: result.tier,
+    n: result.name,
+    s: String(result.score),
+    q: String(result.totalQuestions),
+  });
+  return `${baseUrl}/badge/${result.badgeId}?${params.toString()}`;
+}
+
 export function getShareText(result: BadgeResult): string {
   const config = badgeConfig[result.tier];
   return `🔥 I just earned a ${config.emoji} ${config.label} FHIR IQ Badge at HIMSS 2026! Scored ${result.percentage}% — ${config.title} level!\n\nTest your FHIR knowledge too 👉`;
 }
 
 export function getLinkedInShareUrl(result: BadgeResult, baseUrl: string): string {
-  const url = `${baseUrl}/badge/${result.badgeId}`;
+  const url = getBadgeUrl(result, baseUrl);
   const config = badgeConfig[result.tier];
   const title = `${config.emoji} ${config.label} FHIR IQ Badge — ${config.title}`;
   const summary = `I scored ${result.percentage}% on the FHIR IQ Challenge at HIMSS 2026! ${config.description}`;

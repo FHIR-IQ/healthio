@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BadgeResult, getShareText, getLinkedInShareUrl, badgeConfig } from "@/lib/badge";
+import { BadgeResult, getShareText, getLinkedInShareUrl, getBadgeUrl, badgeConfig } from "@/lib/badge";
 
 interface SharePanelProps {
   badgeResult: BadgeResult;
@@ -13,7 +13,7 @@ export default function SharePanel({ badgeResult }: SharePanelProps) {
   const [showSmsInput, setShowSmsInput] = useState(false);
 
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-  const badgeUrl = `${baseUrl}/badge/${badgeResult.badgeId}`;
+  const badgeUrl = getBadgeUrl(badgeResult, baseUrl);
   const shareText = getShareText(badgeResult);
   const fullShareText = `${shareText} ${badgeUrl}`;
 
